@@ -1,12 +1,28 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Program.cs" company="GLogrus">
+//   Copyright (c) GLogrus. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace ESMA.PerformanceTests
 {
-    class Program
+    using BenchmarkDotNet.Running;
+
+    /// <summary>
+    /// The program.
+    /// </summary>
+    internal class Program
     {
-        static void Main(string[] args)
+        /// <summary>
+        /// The main.
+        /// </summary>
+        /// <param name="args">
+        /// The args.
+        /// </param>
+        private static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            ////BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
+            BenchmarkRunner.Run<Benchmarks>();
         }
     }
 }
