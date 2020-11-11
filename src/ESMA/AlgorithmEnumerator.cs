@@ -40,20 +40,14 @@ namespace ESMA
         /// </returns>
         public static BaseMatch GetClass(string algorithm)
         {
-            BaseMatch value;
-            if (Algorithms.TryGetValue(algorithm, out value))
-            {
-                return value;
-            }
-
-            return new BruteForce();
+            return Algorithms.TryGetValue(algorithm, out var value) ? value : new BruteForce();
         }
 
         /// <summary>
-        /// The get algorithms.
+        ///     The get algorithms.
         /// </summary>
         /// <returns>
-        /// The <see cref="SortedDictionary"/>.
+        ///     The SortedDictionary of BaseMatch.
         /// </returns>
         private static SortedDictionary<string, BaseMatch> GetAlgorithms()
         {

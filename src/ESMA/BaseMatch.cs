@@ -25,31 +25,18 @@ namespace ESMA
         /// </summary>
         static BaseMatch()
         {
-            FileBufferSize = 64 * 1024;
+            IOBufferSize = 64 * 1024;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BaseMatch"/> class.
+        ///     Gets or sets the io buffer size.
         /// </summary>
-        /// <param name="patternArray">
-        /// The pattern array.
-        /// </param>
-        protected BaseMatch(byte[] patternArray)
-        {
-            this.Pattern = patternArray;
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="BaseMatch" /> class.
-        /// </summary>
-        protected BaseMatch()
-        {
-        }
+        public static int IOBufferSize { get; set; }
 
         /// <summary>
         ///     Gets or sets the file buffer size.
         /// </summary>
-        public static int FileBufferSize { get; set; }
+        public int BufferSize { get; set; } = 64 * 1014;
 
         /// <summary>
         ///     Gets or sets the pattern.
@@ -101,8 +88,7 @@ namespace ESMA
             }
 
             var matchIndexes = new List<long>();
-            var index = this.InternalMatch(data, matchIndexes);
-            Console.WriteLine($"{index}");
+            this.InternalMatch(data, matchIndexes, data.Length);
             return matchIndexes.ToArray();
         }
 
@@ -153,7 +139,6 @@ namespace ESMA
         /// </returns>
         public long[] Match(string path)
         {
-            var matchIndexes = new List<long>();
             if (this.pattern == null)
             {
                 throw new ArgumentNullException(nameof(this.pattern));
@@ -164,48 +149,22 @@ namespace ESMA
                 throw new ArgumentException("Pattern not prepared.");
             }
 
-            using (var fileStream = new FileStream(
-                path,
-                FileMode.Open,
-                FileAccess.Read,
-                FileShare.Read,
-                FileBufferSize,
-                FileOptions.SequentialScan))
-            {
-                var patternLength = this.Pattern.Length;
-                var bufferSize = FileBufferSize > patternLength ? FileBufferSize : patternLength;
-                var buffer = new byte[bufferSize];
-                long filePosition = 0;
-                var total = bufferSize;
+            return this.MatchInFile(path);
+        }
 
-                while (total >= patternLength)
-                {
-                    total = fileStream.Read(buffer, 0, buffer.Length);
+        /// <summary>
+        ///     The to string.
+        /// </summary>
+        /// <returns>
+        ///     The <see cref="string" />.
+        /// </returns>
+        public override string ToString()
+        {
+            var algorithm = (AlgorithmAttribute)Attribute.GetCustomAttribute(
+                this.GetType(),
+                typeof(AlgorithmAttribute));
 
-                    if (total < patternLength)
-                    {
-                        break;
-                    }
-
-                    if (total < bufferSize)
-                    {
-                        Array.Resize(ref buffer, total);
-                    }
-
-                    var nextPosition = this.InternalMatch(buffer, matchIndexes, filePosition);
-                    if (nextPosition < total || nextPosition < fileStream.Length)
-                    {
-                        fileStream.Seek(nextPosition - total, SeekOrigin.Current);
-                        filePosition += nextPosition;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-            }
-
-            return matchIndexes.ToArray();
+            return algorithm == null ? this.GetType().Name : algorithm.Name;
         }
 
         /// <summary>
@@ -217,13 +176,16 @@ namespace ESMA
         /// <param name="indexes">
         /// The list of index.
         /// </param>
+        /// <param name="length">
+        /// The length.
+        /// </param>
         /// <param name="offset">
         /// The offset in all buffer.
         /// </param>
         /// <returns>
         /// The next offset.
         /// </returns>
-        protected abstract long InternalMatch(byte[] data, List<long> indexes, long offset = 0);
+        protected abstract int InternalMatch(byte[] data, List<long> indexes, int length, long offset = 0);
 
         /// <summary>
         ///     The pattern prepare.
@@ -234,6 +196,59 @@ namespace ESMA
         protected virtual bool Prepare()
         {
             return true;
+        }
+
+        /// <summary>
+        /// The match in file.
+        /// </summary>
+        /// <param name="path">
+        /// The path.
+        /// </param>
+        /// <returns>
+        /// The array of index.
+        /// </returns>
+        private long[] MatchInFile(string path)
+        {
+            var matchIndexes = new List<long>();
+            using (var fileStream = new FileStream(
+                path,
+                FileMode.Open,
+                FileAccess.Read,
+                FileShare.Read,
+                IOBufferSize,
+                FileOptions.SequentialScan))
+            {
+                var bufferSize = this.BufferSize > this.pattern.Length ? this.BufferSize : this.pattern.Length;
+                var buffer = new byte[bufferSize];
+                long filePosition = 0;
+                var maxFilePosition = fileStream.Length - this.pattern.Length;
+                var offset = 0;
+                int total;
+
+                while ((total = fileStream.Read(buffer, offset, buffer.Length - offset)) >= this.pattern.Length)
+                {
+                    var length = total + offset;
+                    var nextPosition = this.InternalMatch(buffer, matchIndexes, length, filePosition);
+                    filePosition += nextPosition;
+                    if (filePosition > maxFilePosition)
+                    {
+                        break;
+                    }
+
+                    if (nextPosition > length)
+                    {
+                        fileStream.Seek(nextPosition - total, SeekOrigin.Current);
+                        offset = 0;
+                    }
+                    else
+                    {
+                        offset = length - nextPosition;
+                        Buffer.BlockCopy(buffer, nextPosition, buffer, 0, offset);
+                    }
+                }
+            }
+
+            return matchIndexes.ToArray();
         }
     }
 }

@@ -17,5 +17,10 @@
   <ItemGroup>
     <ProjectReference Include="..\ESMA\ESMA.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="FileFixture.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
 </Project>

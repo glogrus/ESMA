@@ -2,9 +2,6 @@
 // <copyright file="BruteForce.cs" company="GLogrus">
 //   Copyright (c) GLogrus. All rights reserved.
 // </copyright>
-// <summary>
-//   The brute force.
-// </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ESMA.Algorithms
@@ -26,28 +23,27 @@ namespace ESMA.Algorithms
         /// <param name="indexes">
         /// The indexes.
         /// </param>
+        /// <param name="length">
+        /// The length.
+        /// </param>
         /// <param name="offset">
         /// The offset.
         /// </param>
         /// <returns>
-        /// The <see cref="int"/>.
+        /// The <see cref="long"/>.
         /// </returns>
-        protected override long InternalMatch(byte[] data, List<long> indexes, long offset = 0)
+        protected override int InternalMatch(byte[] data, List<long> indexes, int length, long offset = 0)
         {
-            var patternLength = this.Pattern.Length;
-            var length = data.Length - patternLength;
             var pattern = this.Pattern;
             int i;
-
-            for (i = 0; i <= length; i++)
+            for (i = 0; i <= length - pattern.Length; i++)
             {
                 int j;
-                int k;
-                for (j = 0, k = i; j < patternLength && pattern[j] == data[k]; j++, k++)
+                for (j = 0; j < pattern.Length && pattern[j] == data[i + j]; j++)
                 {
                 }
 
-                if (j == patternLength)
+                if (j >= pattern.Length)
                 {
                     indexes.Add(i + offset);
                 }
