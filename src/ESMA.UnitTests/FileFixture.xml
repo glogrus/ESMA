@@ -1,18 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
 <files directory="..\..\..\..\..\data">
-  <file name="Small" pattern="SearchTest.small.pattern" data="SearchTest.small.bin" buffersize="128">
+  <file name="Small" data="test.bin" pattern="test.pat" buffersize="256">
     <index value="56" />
     <index value="341" />
     <index value="401" />
     <index value="477" />
     <index value="697" />
-  </file>
-  <file name="Normal" pattern="SearchTest.pattern" data="SearchTest.bin" buffersize="4096">
-    <index value="1864380" />
-    <index value="27400857" />
-    <index value="29100769" />
-    <index value="32370077" />
-    <index value="43033273" />
   </file>
 </files>

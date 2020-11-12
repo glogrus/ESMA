@@ -7,38 +7,86 @@
 namespace ESMA.Cmd
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
+
+    using CommandLine;
+    using CommandLine.Text;
+
+    using ESMA.Cmd.Options;
+    using ESMA.Cmd.Runners;
 
     /// <summary>
     ///     The program.
     /// </summary>
-    internal class Program
+    public static class Program
     {
+        /// <summary>
+        /// The display help.
+        /// </summary>
+        /// <param name="result">
+        /// The result.
+        /// </param>
+        /// <param name="errs">
+        /// The errs.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
+        private static int DisplayHelp(ParserResult<object> result, IEnumerable<Error> errs)
+        {
+            if (errs.Any(error => error.Tag == ErrorType.NoVerbSelectedError))
+            {
+                var parser = new Parser(
+                    with =>
+                    {
+                        with.HelpWriter = null;
+                        with.AutoVersion = true;
+                        with.AutoHelp = true;
+                    });
+                result = parser.ParseArguments<VerbFixture, VerbFind, VerbList>(new[] { "help" });
+            }
+
+            var helpText = HelpText.AutoBuild(
+                result,
+                help =>
+                {
+                    help.AdditionalNewLineAfterOption = false;
+                    help.Copyright = string.Empty;
+                    help.AutoHelp = true;
+                    help.AutoVersion = true;
+                    return HelpText.DefaultParsingErrorsHandler(result, help);
+                });
+
+            Console.WriteLine(helpText);
+            return 0;
+        }
+
         /// <summary>
         /// The main.
         /// </summary>
         /// <param name="args">
         /// The args.
         /// </param>
-        private static void Main(string[] args)
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
+        private static int Main(string[] args)
         {
-            var algorithms = AlgorithmEnumerator.Algorithms;
-            var pattern = Encoding.ASCII.GetBytes("TestStringPattern");
-            var data = new byte[256];
-            Buffer.BlockCopy(pattern, 0, data, 50, pattern.Length);
-            Buffer.BlockCopy(pattern, 0, data, 200, pattern.Length);
-
-            foreach (var (name, algorithm) in algorithms.Select(x => (x.Key, x.Value)))
-            {
-                Console.WriteLine($"Algorithm: \"{name}\"");
-                algorithm.Pattern = pattern;
-                var indexes = algorithm.Match(data);
-                foreach (var index in indexes)
+            var parser = new Parser(
+                with =>
                 {
-                    Console.WriteLine($"Found: {index}");
-                }
-            }
+                    with.HelpWriter = null;
+                    with.AutoVersion = true;
+                    with.AutoHelp = true;
+                });
+
+            var parserResult = parser.ParseArguments<VerbFixture, VerbFind, VerbList>(args);
+            return parserResult.MapResult(
+                (VerbFixture opts) => Fixture.Run(opts),
+                (VerbFind opts) => Find.Run(opts),
+                (VerbList opts) => List.Run(opts),
+                errors => DisplayHelp(parserResult, errors));
         }
     }
 }
