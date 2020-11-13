@@ -1,7 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
 <files directory="..\..\..\..\..\..\..\..\..\data">
-  <file name="T-T-N" data="loremipsum.bin" pattern="desperados.pat" buffersize="65536">
+  <file name="R-R-E" data="random.bin" pattern="random.pat" buffersize="65536">
+    <index value="652914" />
+    <index value="4085252" />
+    <index value="6733890" />
+    <index value="9892571" />
+    <index value="10341915" />
   </file>
   <file name="T-T-E" data="desperados.bin" pattern="desperados.pat" buffersize="65536">
     <index value="402" />
@@ -10,12 +15,8 @@
     <index value="9718339" />
     <index value="10464046" />
   </file>
-  <file name="R-R-E" data="random.bin" pattern="random.pat" buffersize="65536">
-    <index value="652914" />
-    <index value="4085252" />
-    <index value="6733890" />
-    <index value="9892571" />
-    <index value="10341915" />
+  <!--
+  <file name="T-T-N" data="loremipsum.bin" pattern="desperados.pat" buffersize="65536">
   </file>
   <file name="R-R-N" data="random.bin" pattern="randomnoexist.pat" buffersize="65536">
   </file>
@@ -28,4 +29,5 @@
     <index value="5725766" />
     <index value="9586806" />
   </file>
+-->
 </files>

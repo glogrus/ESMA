@@ -36,7 +36,7 @@ namespace ESMA.Algorithms
         {
             var pattern = this.Pattern;
             int i;
-            for (i = 0; i <= length - pattern.Length; i++)
+            for (i = 0; i < length - pattern.Length; i++)
             {
                 int j;
                 for (j = 0; j < pattern.Length && pattern[j] == data[i + j]; j++)
