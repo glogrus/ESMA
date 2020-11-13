@@ -18,7 +18,6 @@ namespace ESMA.PerformanceTests
     [Orderer(SummaryOrderPolicy.FastestToSlowest)]
     [MemoryDiagnoser]
 
-    ////[SimpleJob(RunStrategy.ColdStart, RuntimeMoniker.Net472, 4, 3, 20, -1, "Net472")]
     [SimpleJob(RuntimeMoniker.NetCoreApp31)]
     [MarkdownExporterAttribute.GitHub]
     [HtmlExporter]
@@ -57,7 +56,7 @@ namespace ESMA.PerformanceTests
         /// <summary>
         ///     Gets or sets the source.
         /// </summary>
-        [Params("Memory", "File")]
+        [Params("File")]
         public string Source { get; set; }
 
         /// <summary>

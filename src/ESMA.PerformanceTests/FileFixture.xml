@@ -1,31 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
 <files directory="..\..\..\..\..\..\..\..\..\data">
-  <file name="Text NotExist" data="loremipsum.bin" pattern="desperados.pat" buffersize="65536">
+  <file name="T-T-N" data="loremipsum.bin" pattern="desperados.pat" buffersize="65536">
   </file>
-  <file name="Text Exist" data="desperados.bin" pattern="desperados.pat" buffersize="65536">
+  <file name="T-T-E" data="desperados.bin" pattern="desperados.pat" buffersize="65536">
     <index value="402" />
-    <index value="70416128" />
-    <index value="87745874" />
-    <index value="95643178" />
-    <index value="100030292" />
+    <index value="1045" />
+    <index value="9411191" />
+    <index value="9718339" />
+    <index value="10464046" />
   </file>
-  <file name="Random Exist" data="random.bin" pattern="random.pat" buffersize="65536">
-    <index value="423069" />
-    <index value="888874" />
-    <index value="65777782" />
-    <index value="93128372" />
-    <index value="99730245" />
+  <file name="R-R-E" data="random.bin" pattern="random.pat" buffersize="65536">
+    <index value="652914" />
+    <index value="4085252" />
+    <index value="6733890" />
+    <index value="9892571" />
+    <index value="10341915" />
   </file>
-  <file name="Random NotExist" data="random.bin" pattern="random2.pat" buffersize="65536">
+  <file name="R-R-N" data="random.bin" pattern="randomnoexist.pat" buffersize="65536">
   </file>
-  <file name="Random Text NotExist" data="random.bin" pattern="desperados.pat" buffersize="65536">
+  <file name="R-T-N" data="random.bin" pattern="desperados.pat" buffersize="65536">
   </file>
-  <file name="Random Text Exist" data="randomwithdesperados.bin" pattern="desperados.pat" buffersize="65536">
-    <index value="336" />
-    <index value="1008" />
-    <index value="63616848" />
-    <index value="75682112" />
-    <index value="104419312" />
+  <file name="R-T-E" data="randomwithdesperados.bin" pattern="desperados.pat" buffersize="65536">
+    <index value="400" />
+    <index value="4650784" />
+    <index value="4651446" />
+    <index value="5725766" />
+    <index value="9586806" />
   </file>
 </files>
