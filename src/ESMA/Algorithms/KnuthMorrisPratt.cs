@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="QuickSearch.cs" company="GLogrus">
+// <copyright file="KnuthMorrisPratt.cs" company="GLogrus">
 //   Copyright (c) GLogrus. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -9,15 +9,15 @@ namespace ESMA.Algorithms
     using System.Collections.Generic;
 
     /// <summary>
-    ///     The brute force.
+    ///     The Knuth-Morris-Pratt.
     /// </summary>
-    [Algorithm("Quick Search")]
-    public class QuickSearch : BaseMatch
+    [Algorithm("Knuth-Morris-Pratt")]
+    public class KnuthMorrisPratt : BaseMatch
     {
         /// <summary>
-        ///     The bad s character shift.
+        ///     The Knuth-Morris-Pratt next.
         /// </summary>
-        private int[] badSCharacterShift;
+        private int[] kmpNext;
 
         /// <summary>
         /// The internal match.
@@ -35,32 +35,47 @@ namespace ESMA.Algorithms
         /// The offset.
         /// </param>
         /// <returns>
-        /// The <see cref="long"/>.
+        /// The array of index.
         /// </returns>
         protected override int InternalMatch(byte[] data, List<long> indexes, int length, long offset = 0)
         {
             var pattern = this.Pattern;
-            var i = 0;
 
-            while (i <= length - pattern.Length)
+            var i = 0;
+            var j = 0;
+            while (i < length)
             {
-                int j;
-                for (j = 0; j < pattern.Length && i < length && pattern[j] == data[i]; j++, i++)
+                if (data[i] == pattern[j])
                 {
+                    i++;
+                    j++;
                 }
 
-                if (j >= pattern.Length)
+                if (j == pattern.Length)
                 {
-                    indexes.Add((i + offset) - pattern.Length);
+                    indexes.Add((i + offset) - j);
+                    j = this.kmpNext[j - 1];
                     continue;
                 }
 
-                if (i + pattern.Length >= length)
+                if (i >= length)
                 {
                     break;
                 }
 
-                i += this.badSCharacterShift[data[i + pattern.Length]];
+                if (pattern[j] == data[i])
+                {
+                    continue;
+                }
+
+                if (j != 0)
+                {
+                    j = this.kmpNext[j - 1];
+                }
+                else
+                {
+                    i++;
+                }
             }
 
             return i;
@@ -74,34 +89,47 @@ namespace ESMA.Algorithms
         /// </returns>
         protected override bool Prepare()
         {
-            this.badSCharacterShift = QuickSearchBadSCharacterShift(this.Pattern);
+            this.kmpNext = KnuthMorrisPrattNext(this.Pattern);
             return true;
         }
 
         /// <summary>
-        /// The Quick Search Bad shifts.
+        /// The Knuth-Morris-Pratt Next.
         /// </summary>
         /// <param name="pattern">
         /// The pattern.
         /// </param>
         /// <returns>
-        /// The array of Bad shifts.
+        /// The array of next.
         /// </returns>
-        private static int[] QuickSearchBadSCharacterShift(byte[] pattern)
+        private static int[] KnuthMorrisPrattNext(byte[] pattern)
         {
-            var bcs = new int[256];
+            var next = new int[pattern.Length];
+            var j = 0;
+            next[0] = 0;
 
-            for (var i = 0; i < 256; ++i)
+            for (var i = 1; i < pattern.Length; i++)
             {
-                bcs[i] = pattern.Length + 1;
+                if (pattern[i] == pattern[j])
+                {
+                    j++;
+                    next[i] = j;
+                }
+                else
+                {
+                    if (j != 0)
+                    {
+                        j = next[j - 1];
+                        i--;
+                    }
+                    else
+                    {
+                        next[i] = 0;
+                    }
+                }
             }
 
-            for (var i = 0; i < pattern.Length; i++)
-            {
-                bcs[pattern[i]] = pattern.Length - i;
-            }
-
-            return bcs;
+            return next;
         }
     }
 }

@@ -2,7 +2,7 @@
   "profiles": {
     "ESMA.Cmd": {
       "commandName": "Project",
-      "commandLineArgs": "find -a \"Not So Naive\" -f ..\\..\\..\\..\\..\\data\\test.bin -p .\\..\\..\\..\\..\\..\\data\\test.pat"
+      "commandLineArgs": "find -a \"Knuth-Morris-Pratt\" -f ..\\..\\..\\..\\..\\data\\test1.bin -p .\\..\\..\\..\\..\\..\\data\\test1.pat"
     },
     "WSL 2": {
       "commandName": "WSL2",
