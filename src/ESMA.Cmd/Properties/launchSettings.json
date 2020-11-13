@@ -1,7 +1,8 @@
 {
   "profiles": {
     "ESMA.Cmd": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "find -a \"Not So Naive\" -f ..\\..\\..\\..\\..\\data\\test.bin -p .\\..\\..\\..\\..\\..\\data\\test.pat"
     },
     "WSL 2": {
       "commandName": "WSL2",

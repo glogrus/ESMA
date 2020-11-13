@@ -36,7 +36,7 @@ namespace ESMA
         /// <summary>
         ///     Gets or sets the file buffer size.
         /// </summary>
-        public int BufferSize { get; set; } = 64 * 1014;
+        public int BufferSize { get; set; } = 64 * 1024;
 
         /// <summary>
         ///     Gets or sets the pattern.
@@ -218,7 +218,17 @@ namespace ESMA
                 IOBufferSize,
                 FileOptions.SequentialScan))
             {
-                var bufferSize = this.BufferSize > this.pattern.Length ? this.BufferSize : this.pattern.Length;
+                if (fileStream.Length < this.pattern.Length)
+                {
+                    return matchIndexes.ToArray();
+                }
+
+                var bufferSize = this.BufferSize > fileStream.Length ? fileStream.Length : this.BufferSize;
+                if (bufferSize < this.pattern.Length)
+                {
+                    bufferSize = this.pattern.Length;
+                }
+
                 var buffer = new byte[bufferSize];
                 long filePosition = 0;
                 var maxFilePosition = fileStream.Length - this.pattern.Length;

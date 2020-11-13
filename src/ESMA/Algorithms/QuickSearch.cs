@@ -20,32 +20,6 @@ namespace ESMA.Algorithms
         private int[] badSCharacterShift;
 
         /// <summary>
-        /// The Quick Search Bad shifts.
-        /// </summary>
-        /// <param name="pattern">
-        /// The pattern.
-        /// </param>
-        /// <returns>
-        /// The array of Bad shifts.
-        /// </returns>
-        internal static int[] QuickSearchBadSCharacterShift(byte[] pattern)
-        {
-            var bcs = new int[256];
-
-            for (var i = 0; i < 256; ++i)
-            {
-                bcs[i] = pattern.Length + 1;
-            }
-
-            for (var i = 0; i < pattern.Length; i++)
-            {
-                bcs[pattern[i]] = pattern.Length - i;
-            }
-
-            return bcs;
-        }
-
-        /// <summary>
         /// The internal match.
         /// </summary>
         /// <param name="data">
@@ -68,19 +42,25 @@ namespace ESMA.Algorithms
             var pattern = this.Pattern;
             var i = 0;
 
-            while (i < length - pattern.Length)
+            while (i <= length - pattern.Length)
             {
                 int j;
-                for (j = pattern.Length - 1; j >= 0 && pattern[j] == data[i + j]; j--)
+                for (j = 0; j < pattern.Length && i < length && pattern[j] == data[i]; j++, i++)
                 {
                 }
 
-                if (j < 0)
+                if (j >= pattern.Length)
                 {
-                    indexes.Add(i + offset);
+                    indexes.Add((i + offset) - pattern.Length);
+                    continue;
                 }
 
-                i += this.badSCharacterShift[data[(i + pattern.Length)]];
+                if (i + pattern.Length >= length)
+                {
+                    break;
+                }
+
+                i += this.badSCharacterShift[data[i + pattern.Length]];
             }
 
             return i;
@@ -96,50 +76,6 @@ namespace ESMA.Algorithms
         {
             this.badSCharacterShift = QuickSearchBadSCharacterShift(this.Pattern);
             return true;
-        }
-
-        /// <summary>
-        /// The Boyer-Moore Good Suffixes.
-        /// </summary>
-        /// <param name="pattern">
-        /// The pattern.
-        /// </param>
-        /// <returns>
-        /// The Good Suffixes shift.
-        /// </returns>
-        private static int[] BoyerMooreGoodSuffixes(byte[] pattern)
-        {
-            var gs = new int[pattern.Length];
-            var suffixes = BoyerMooreSuffixes(pattern);
-
-            for (var i = 0; i < pattern.Length; i++)
-            {
-                gs[i] = pattern.Length;
-            }
-
-            var j = 0;
-            for (var i = pattern.Length - 1; i >= 0; i--)
-            {
-                if (suffixes[i] != i + 1)
-                {
-                    continue;
-                }
-
-                for (; j < pattern.Length - 1 - i; ++j)
-                {
-                    if (gs[j] == pattern.Length)
-                    {
-                        gs[j] = pattern.Length - 1 - i;
-                    }
-                }
-            }
-
-            for (var i = 0; i <= pattern.Length - 2; ++i)
-            {
-                gs[pattern.Length - 1 - suffixes[i]] = pattern.Length - 1 - i;
-            }
-
-            return gs;
         }
 
         /// <summary>
@@ -181,6 +117,32 @@ namespace ESMA.Algorithms
             }
 
             return suffixes;
+        }
+
+        /// <summary>
+        /// The Quick Search Bad shifts.
+        /// </summary>
+        /// <param name="pattern">
+        /// The pattern.
+        /// </param>
+        /// <returns>
+        /// The array of Bad shifts.
+        /// </returns>
+        private static int[] QuickSearchBadSCharacterShift(byte[] pattern)
+        {
+            var bcs = new int[256];
+
+            for (var i = 0; i < 256; ++i)
+            {
+                bcs[i] = pattern.Length + 1;
+            }
+
+            for (var i = 0; i < pattern.Length; i++)
+            {
+                bcs[pattern[i]] = pattern.Length - i;
+            }
+
+            return bcs;
         }
     }
 }

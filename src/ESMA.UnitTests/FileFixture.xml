@@ -1,12 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
 <files directory="..\..\..\..\..\data">
-  <file name="1024-8" data="test.bin" pattern="test.pat" buffersize="256">
+  <file name="1024-8-1" data="test1.bin" pattern="test1.pat" buffersize="256">
+    <index value="0" />
     <index value="56" />
     <index value="341" />
     <index value="401" />
     <index value="477" />
     <index value="697" />
+    <index value="1016" />
+  </file>
+  <file name="1024-8-2" data="test2.bin" pattern="test2.pat" buffersize="256">
+    <index value="0" />
+    <index value="56" />
+    <index value="341" />
+    <index value="401" />
+    <index value="477" />
+    <index value="697" />
+    <index value="1016" />
   </file>
   <file name="R-R-E" data="random.bin" pattern="random.pat" buffersize="65536">
     <index value="652914" />

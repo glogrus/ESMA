@@ -31,7 +31,7 @@ namespace ESMA.Algorithms
         /// The pattern.
         /// </param>
         /// <returns>
-        /// The <see cref="int[]"/>.
+        /// The array of shifts.
         /// </returns>
         internal static int[] BoyerMooreBadSCharacterShift(byte[] pattern)
         {
@@ -71,7 +71,7 @@ namespace ESMA.Algorithms
         {
             var pattern = this.Pattern;
             var i = 0;
-            while (i < length - pattern.Length)
+            while (i <= length - pattern.Length)
             {
                 int j;
                 for (j = pattern.Length - 1; j >= 0 && pattern[j] == data[i + j]; j--)
