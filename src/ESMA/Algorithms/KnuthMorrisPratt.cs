@@ -40,42 +40,24 @@ namespace ESMA.Algorithms
         protected override int InternalMatch(byte[] data, List<long> indexes, int length, long offset = 0)
         {
             var pattern = this.Pattern;
-
             var i = 0;
             var j = 0;
-            while (i < length)
+
+            while (i <= length - pattern.Length)
             {
-                if (data[i] == pattern[j])
+                while (j == -1 || (j < pattern.Length && pattern[j] == data[i]))
                 {
-                    i++;
                     j++;
+                    i++;
                 }
 
                 if (j == pattern.Length)
                 {
                     indexes.Add((i + offset) - j);
-                    j = this.kmpNext[j - 1];
-                    continue;
+                    j = 0;
                 }
 
-                if (i >= length)
-                {
-                    break;
-                }
-
-                if (pattern[j] == data[i])
-                {
-                    continue;
-                }
-
-                if (j != 0)
-                {
-                    j = this.kmpNext[j - 1];
-                }
-                else
-                {
-                    i++;
-                }
+                j = this.kmpNext[j];
             }
 
             return i;
@@ -105,28 +87,24 @@ namespace ESMA.Algorithms
         private static int[] KnuthMorrisPrattNext(byte[] pattern)
         {
             var next = new int[pattern.Length];
-            var j = 0;
-            next[0] = 0;
+            var j = next[0] = -1;
+            var i = 0;
 
-            for (var i = 1; i < pattern.Length; i++)
+            while (i < pattern.Length)
             {
-                if (pattern[i] == pattern[j])
+                while (j == -1 || (i < pattern.Length && pattern[i] == pattern[j]))
                 {
+                    i++;
                     j++;
-                    next[i] = j;
-                }
-                else
-                {
-                    if (j != 0)
+                    if (i >= pattern.Length)
                     {
-                        j = next[j - 1];
-                        i--;
+                        break;
                     }
-                    else
-                    {
-                        next[i] = 0;
-                    }
+
+                    next[i] = pattern[i] == pattern[j] ? next[j] : j;
                 }
+
+                j = next[j];
             }
 
             return next;
