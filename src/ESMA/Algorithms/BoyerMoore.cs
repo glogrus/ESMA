@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Boyer-Moore.cs" company="GLogrus">
+// <copyright file="BoyerMoore.cs" company="GLogrus">
 //   Copyright (c) GLogrus. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -17,7 +17,7 @@ namespace ESMA.Algorithms
         /// <summary>
         /// The bad s character shift.
         /// </summary>
-        private int[] badSCharacterShift;
+        private int[] badCharacterShift;
 
         /// <summary>
         /// The good suffixes.
@@ -33,7 +33,7 @@ namespace ESMA.Algorithms
         /// <returns>
         /// The array of shifts.
         /// </returns>
-        internal static int[] BoyerMooreBadSCharacterShift(byte[] pattern)
+        internal static int[] BoyerMooreBadCharacterShift(byte[] pattern)
         {
             var bcs = new int[256];
             for (var i = 0; i < 256; ++i)
@@ -86,7 +86,7 @@ namespace ESMA.Algorithms
                 else
                 {
                     var i1 = this.goodSuffixes[j];
-                    var i2 = (this.badSCharacterShift[data[i + j]] - pattern.Length) + 1 + j;
+                    var i2 = (this.badCharacterShift[data[i + j]] - pattern.Length) + 1 + j;
                     i += i1 > i2 ? i1 : i2;
                 }
             }
@@ -103,7 +103,7 @@ namespace ESMA.Algorithms
         protected override bool Prepare()
         {
             this.goodSuffixes = BoyerMooreGoodSuffixes(this.Pattern);
-            this.badSCharacterShift = BoyerMooreBadSCharacterShift(this.Pattern);
+            this.badCharacterShift = BoyerMooreBadCharacterShift(this.Pattern);
             return true;
         }
 
@@ -116,7 +116,7 @@ namespace ESMA.Algorithms
         /// <returns>
         /// The Good Suffixes shift.
         /// </returns>
-        private static int[] BoyerMooreGoodSuffixes(byte[] pattern)
+        internal static int[] BoyerMooreGoodSuffixes(byte[] pattern)
         {
             var gs = new int[pattern.Length];
             var suffixes = BoyerMooreSuffixes(pattern);
