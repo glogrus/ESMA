@@ -44,13 +44,13 @@ namespace ESMA.Cmd.Options
         /// <summary>
         ///     Gets the file.
         /// </summary>
-        [Option('f', "fixture", Default = "Fixture.xml", Required = false, HelpText = "Fixture file name.")]
+        [Option('f', "fixture", Default = "random", Required = false, HelpText = "Fixture file name.")]
         public string File { get; }
 
         /// <summary>
         ///     Gets the path.
         /// </summary>
-        [Option('d', "directory", Default = "./data", Required = false, HelpText = "Path to data directory.")]
+        [Option('d', "directory", Default = ".", Required = false, HelpText = "Path to data directory.")]
         public string Path { get; }
 
         /// <summary>
@@ -62,13 +62,13 @@ namespace ESMA.Cmd.Options
         /// <summary>
         ///     Gets the pattern size.
         /// </summary>
-        [Option('p', "patternsize", Default = 256, Required = false, HelpText = "Pattern size.")]
+        [Option('p', "patternsize", Default = 64, Required = false, HelpText = "Pattern size.")]
         public int PatternSize { get; }
 
         /// <summary>
         ///     Gets the size.
         /// </summary>
-        [Option('s', "size", Default = 10485760, Required = false, HelpText = "Data size.")]
+        [Option('s', "size", Default = 1048576, Required = false, HelpText = "Data size.")]
         public int Size { get; }
     }
 }

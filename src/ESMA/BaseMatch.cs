@@ -253,7 +253,10 @@ namespace ESMA
                     else
                     {
                         offset = length - nextPosition;
-                        Buffer.BlockCopy(buffer, nextPosition, buffer, 0, offset);
+                        if (offset > 0)
+                        {
+                            Buffer.BlockCopy(buffer, nextPosition, buffer, 0, offset);
+                        }
                     }
                 }
             }
