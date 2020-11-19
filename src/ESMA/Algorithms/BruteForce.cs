@@ -6,7 +6,6 @@
 
 namespace ESMA.Algorithms
 {
-    using System;
     using System.Collections.Generic;
 
     /// <summary>

@@ -15,12 +15,12 @@ namespace ESMA.Algorithms
     public class BoyerMoore : BaseMatch
     {
         /// <summary>
-        /// The bad s character shift.
+        ///     The bad s character shift.
         /// </summary>
         private int[] badCharacterShift;
 
         /// <summary>
-        /// The good suffixes.
+        ///     The good suffixes.
         /// </summary>
         private int[] goodSuffixes;
 
@@ -47,6 +47,50 @@ namespace ESMA.Algorithms
             }
 
             return bcs;
+        }
+
+        /// <summary>
+        /// The Boyer-Moore Good Suffixes.
+        /// </summary>
+        /// <param name="pattern">
+        /// The pattern.
+        /// </param>
+        /// <returns>
+        /// The Good Suffixes shift.
+        /// </returns>
+        internal static int[] BoyerMooreGoodSuffixes(byte[] pattern)
+        {
+            var gs = new int[pattern.Length];
+            var suffixes = BoyerMooreSuffixes(pattern);
+
+            for (var i = 0; i < pattern.Length; i++)
+            {
+                gs[i] = pattern.Length;
+            }
+
+            var j = 0;
+            for (var i = pattern.Length - 1; i >= 0; i--)
+            {
+                if (suffixes[i] != i + 1)
+                {
+                    continue;
+                }
+
+                for (; j < pattern.Length - 1 - i; ++j)
+                {
+                    if (gs[j] == pattern.Length)
+                    {
+                        gs[j] = pattern.Length - 1 - i;
+                    }
+                }
+            }
+
+            for (var i = 0; i <= pattern.Length - 2; ++i)
+            {
+                gs[pattern.Length - 1 - suffixes[i]] = pattern.Length - 1 - i;
+            }
+
+            return gs;
         }
 
         /// <summary>
@@ -95,60 +139,16 @@ namespace ESMA.Algorithms
         }
 
         /// <summary>
-        /// The prepare.
+        ///     The prepare.
         /// </summary>
         /// <returns>
-        /// The <see cref="bool"/>.
+        ///     The <see cref="bool" />.
         /// </returns>
         protected override bool Prepare()
         {
             this.goodSuffixes = BoyerMooreGoodSuffixes(this.Pattern);
             this.badCharacterShift = BoyerMooreBadCharacterShift(this.Pattern);
             return true;
-        }
-
-        /// <summary>
-        /// The Boyer-Moore Good Suffixes.
-        /// </summary>
-        /// <param name="pattern">
-        /// The pattern.
-        /// </param>
-        /// <returns>
-        /// The Good Suffixes shift.
-        /// </returns>
-        internal static int[] BoyerMooreGoodSuffixes(byte[] pattern)
-        {
-            var gs = new int[pattern.Length];
-            var suffixes = BoyerMooreSuffixes(pattern);
-
-            for (var i = 0; i < pattern.Length; i++)
-            {
-                gs[i] = pattern.Length;
-            }
-
-            var j = 0;
-            for (var i = pattern.Length - 1; i >= 0; i--)
-            {
-                if (suffixes[i] != i + 1)
-                {
-                    continue;
-                }
-
-                for (; j < pattern.Length - 1 - i; ++j)
-                {
-                    if (gs[j] == pattern.Length)
-                    {
-                        gs[j] = pattern.Length - 1 - i;
-                    }
-                }
-            }
-
-            for (var i = 0; i <= pattern.Length - 2; ++i)
-            {
-                gs[pattern.Length - 1 - suffixes[i]] = pattern.Length - 1 - i;
-            }
-
-            return gs;
         }
 
         /// <summary>

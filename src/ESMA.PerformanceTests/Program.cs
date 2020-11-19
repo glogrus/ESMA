@@ -16,12 +16,8 @@ namespace ESMA.PerformanceTests
         /// <summary>
         /// The main.
         /// </summary>
-        /// <param name="args">
-        /// The args.
-        /// </param>
-        private static void Main(string[] args)
+        private static void Main()
         {
-            ////BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
             BenchmarkRunner.Run<Benchmarks>();
         }
     }
