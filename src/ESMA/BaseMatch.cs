@@ -235,7 +235,7 @@ namespace ESMA
                 var offset = 0;
                 int total;
 
-                while ((total = fileStream.Read(buffer, offset, buffer.Length - offset)) >= this.pattern.Length)
+                while ((total = fileStream.Read(buffer, offset, buffer.Length - offset)) >= this.pattern.Length - offset)
                 {
                     var length = total + offset;
                     var nextPosition = this.InternalMatch(buffer, matchIndexes, length, filePosition);

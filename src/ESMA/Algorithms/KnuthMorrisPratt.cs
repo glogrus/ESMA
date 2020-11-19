@@ -40,24 +40,29 @@ namespace ESMA.Algorithms
         protected override int InternalMatch(byte[] data, List<long> indexes, int length, long offset = 0)
         {
             var pattern = this.Pattern;
+            var next = this.kmpNext;
+            var last = pattern.Length - 1;
+
+            var i = 0;
             var j = 0;
-            int i;
-            for (i = 0; i <= length - pattern.Length; i++)
+            while (i < length)
             {
-                for (j = j != 0 ? this.kmpNext[j] : 0; j < pattern.Length && pattern[j] == data[i + j]; j++)
+                while (j > -1 && data[i] != pattern[j])
                 {
+                    j = next[j];
                 }
 
-                if (j < pattern.Length)
+                if (j >= last)
                 {
-                    continue;
+                    indexes.Add((i - j) + offset);
+                    j = next[j];
                 }
 
-                indexes.Add(i + offset);
-                j = 0;
+                i++;
+                j++;
             }
 
-            return i;
+            return i - j;
         }
 
         /// <summary>
@@ -84,25 +89,23 @@ namespace ESMA.Algorithms
         private static int[] KnuthMorrisPrattNext(byte[] pattern)
         {
             var next = new int[pattern.Length];
-            next[0] = -1;
-            var j = 0;
-            var k = -1;
-
-            while (j < pattern.Length - 1)
+            var i = 0;
+            var j = next[0] = -1;
+            while (i < pattern.Length)
             {
-                if (k == -1)
+                while (j > -1 && pattern[i] != pattern[j])
                 {
-                    next[++j] = 0;
-                    k = 0;
+                    j = next[j];
                 }
-                else if (pattern[j] == pattern[k])
+
+                i++;
+                j++;
+                if (i >= pattern.Length)
                 {
-                    next[++j] = ++k;
+                    break;
                 }
-                else
-                {
-                    k = next[k];
-                }
+
+                next[i] = pattern[i] == pattern[j] ? next[j] : j;
             }
 
             return next;

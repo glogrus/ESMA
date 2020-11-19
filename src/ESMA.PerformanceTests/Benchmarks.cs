@@ -7,21 +7,28 @@
 namespace ESMA.PerformanceTests
 {
     using System.Collections.Generic;
+    using System.Globalization;
 
     using BenchmarkDotNet.Attributes;
+    using BenchmarkDotNet.Columns;
+    using BenchmarkDotNet.Configs;
+    using BenchmarkDotNet.Exporters.Csv;
     using BenchmarkDotNet.Jobs;
     using BenchmarkDotNet.Order;
+    using BenchmarkDotNet.Reports;
+
+    using Perfolizer.Horology;
 
     /// <summary>
     ///     The benchmarks.
     /// </summary>
     [Orderer(SummaryOrderPolicy.FastestToSlowest)]
     [MemoryDiagnoser]
-
     [SimpleJob(RuntimeMoniker.NetCoreApp31)]
     [MarkdownExporterAttribute.GitHub]
     [HtmlExporter]
     [RankColumn]
+    [Config(typeof(Config))]
     public class Benchmarks
     {
         /// <summary>
@@ -36,7 +43,7 @@ namespace ESMA.PerformanceTests
         public IEnumerable<string> Algorithms => AlgorithmEnumerator.Algorithms.Keys;
 
         /// <summary>
-        /// Gets the file fixtures.
+        ///     Gets the file fixtures.
         /// </summary>
         public IEnumerable<FileFixture> FileFixtures
         {
@@ -75,6 +82,23 @@ namespace ESMA.PerformanceTests
                     matcher.BufferSize = this.Fixture.BufferSize;
                     matcher.Match(this.Fixture.DataFilePath, this.Fixture.Pattern);
                     break;
+            }
+        }
+
+        /// <summary>
+        ///     The config.
+        /// </summary>
+        private class Config : ManualConfig
+        {
+            /// <summary>
+            ///     Initializes a new instance of the <see cref="Config" /> class.
+            /// </summary>
+            public Config()
+            {
+                this.AddExporter(
+                    new CsvExporter(
+                        CsvSeparator.CurrentCulture,
+                        new SummaryStyle(CultureInfo.InvariantCulture, true, SizeUnit.KB, TimeUnit.Microsecond, false)));
             }
         }
     }
