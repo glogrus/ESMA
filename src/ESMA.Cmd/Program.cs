@@ -37,14 +37,16 @@ namespace ESMA.Cmd
         {
             if (errs.Any(error => error.Tag == ErrorType.NoVerbSelectedError))
             {
-                var parser = new Parser(
+                using (var parser = new Parser(
                     with =>
                     {
                         with.HelpWriter = null;
                         with.AutoVersion = true;
                         with.AutoHelp = true;
-                    });
-                result = parser.ParseArguments<VerbFixture, VerbFind, VerbList>(new[] { "help" });
+                    }))
+                {
+                    result = parser.ParseArguments<VerbFixture, VerbFind, VerbList>(new[] { "help" });
+                }
             }
 
             var helpText = HelpText.AutoBuild(
@@ -73,20 +75,21 @@ namespace ESMA.Cmd
         /// </returns>
         private static int Main(string[] args)
         {
-            var parser = new Parser(
+            using (var parser = new Parser(
                 with =>
                 {
                     with.HelpWriter = null;
                     with.AutoVersion = true;
                     with.AutoHelp = true;
-                });
-
-            var parserResult = parser.ParseArguments<VerbFixture, VerbFind, VerbList>(args);
-            return parserResult.MapResult(
-                (VerbFixture opts) => Fixture.Run(opts),
-                (VerbFind opts) => Find.Run(opts),
-                (VerbList opts) => List.Run(opts),
-                errors => DisplayHelp(parserResult, errors));
+                }))
+            {
+                var parserResult = parser.ParseArguments<VerbFixture, VerbFind, VerbList>(args);
+                return parserResult.MapResult(
+                    (VerbFixture opts) => Fixture.Run(opts),
+                    (VerbFind opts) => Find.Run(opts),
+                    (VerbList opts) => List.Run(opts),
+                    errors => DisplayHelp(parserResult, errors));
+            }
         }
     }
 }

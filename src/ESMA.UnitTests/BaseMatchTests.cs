@@ -106,6 +106,11 @@ namespace ESMA.UnitTests
             /// </param>
             public MatrixTheoryData(IEnumerable<T1> data1, IEnumerable<T2> data2)
             {
+                if (data1 is null || data2 is null)
+                {
+                    return;
+                }
+
                 var enumerable1 = data1 as T1[] ?? data1.ToArray();
                 Contract.Assert(data1 != null && enumerable1.Any());
                 var enumerable2 = data2 as T2[] ?? data2.ToArray();
