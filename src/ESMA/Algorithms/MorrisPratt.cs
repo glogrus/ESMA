@@ -87,7 +87,7 @@ namespace ESMA.Algorithms
         /// <returns>
         /// The array of algorithmNext.
         /// </returns>
-        private static int[] MorrisPrattNext(byte[] pattern)
+        internal static int[] MorrisPrattNext(byte[] pattern)
         {
             var next = new int[pattern.Length];
             var i = 0;

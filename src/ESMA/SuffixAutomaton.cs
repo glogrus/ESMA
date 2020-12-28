@@ -44,6 +44,7 @@ namespace ESMA
         {
             this.size = 2 * (pattern.Length + 2);
             this.Target = new int[this.size, 256];
+            this.Shift = new int[this.size, 256];
             this.Terminal = new bool[this.size];
             for (var i = 0; i < this.size; i++)
             {
@@ -56,6 +57,11 @@ namespace ESMA
 
             this.BuildSuffixAutomaton(reverse ? Reverse(pattern) : pattern);
         }
+
+        /// <summary>
+        ///     Gets the shift.
+        /// </summary>
+        public int[,] Shift { get; }
 
         /// <summary>
         ///     Gets the target.
@@ -104,7 +110,6 @@ namespace ESMA
             var suffixLink = new int[this.size];
             var length = new int[this.size];
             var position = new int[this.size];
-            var shift = new int[this.size, 256];
 
             var init = InitialVertex;
             var vertex = this.NextVertex;
@@ -119,14 +124,14 @@ namespace ESMA
                 while (p != init && this.Target[p, ch] == Undefined)
                 {
                     this.Target[p, ch] = q;
-                    shift[p, ch] = position[q] - position[p] - 1;
+                    this.Shift[p, ch] = position[q] - position[p] - 1;
                     p = suffixLink[p];
                 }
 
                 if (this.Target[p, ch] == Undefined)
                 {
                     this.Target[init, ch] = q;
-                    shift[init, ch] = position[q] - position[init] - 1;
+                    this.Shift[init, ch] = position[q] - position[init] - 1;
                     suffixLink[q] = init;
                 }
                 else
@@ -146,7 +151,7 @@ namespace ESMA
                         for (var i = 0; i < 256; i++)
                         {
                             this.Target[r, i] = this.Target[source, i];
-                            shift[r, i] = shift[source, i];
+                            this.Shift[r, i] = this.Shift[source, i];
                         }
 
                         length[r] = length[p] + 1;
@@ -154,7 +159,7 @@ namespace ESMA
                         suffixLink[q] = r;
                         while (p != vertex && length[this.Target[p, ch]] >= length[r])
                         {
-                            shift[p, ch] = position[this.Target[p, ch]] - position[p] - 1;
+                            this.Shift[p, ch] = position[this.Target[p, ch]] - position[p] - 1;
                             this.Target[p, ch] = r;
                             p = suffixLink[p];
                         }
