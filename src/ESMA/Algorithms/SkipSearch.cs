@@ -40,31 +40,23 @@ namespace ESMA.Algorithms
         protected override int InternalMatch(byte[] data, List<long> indexes, int length, long offset = 0)
         {
             var pattern = this.Pattern;
+            var patternLength = pattern.Length;
             var list = this.skipSearchList;
 
-            var i = pattern.Length - 1;
-            for (; i < length; i += this.Pattern.Length)
+            int i;
+            for (i = pattern.Length - 1; i < length; i += patternLength)
             {
                 for (var node = list[data[i]]; node != null; node = node.Next)
                 {
                     int j;
-                    for (j = 0; j < pattern.Length; j++)
+                    var index = i - node.Data;
+                    for (j = 0; j < patternLength && index + j < length && pattern[j] == data[index + j]; j++)
                     {
-                        var index = i + j - node.Data;
-                        if (index >= data.Length)
-                        {
-                            break;
-                        }
-
-                        if (pattern[j] != data[index])
-                        {
-                            break;
-                        }
                     }
 
-                    if (j >= pattern.Length)
+                    if (j >= patternLength)
                     {
-                        indexes.Add(i - node.Data + offset);
+                        indexes.Add(index + offset);
                     }
                 }
             }
