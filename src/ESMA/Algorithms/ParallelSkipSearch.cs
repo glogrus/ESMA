@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SkipSearch.cs" company="GLogrus">
+// <copyright file="ParallelSkipSearch.cs" company="GLogrus">
 //   Copyright (c) GLogrus. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -8,13 +8,13 @@ namespace ESMA.Algorithms
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
+    using System.Threading.Tasks;
 
     /// <summary>
-    ///     The Skip Search.
+    ///     The Parallel Skip Search.
     /// </summary>
-    [Algorithm("Skip Search")]
-    public class SkipSearch : BaseMatch
+    [Algorithm("Parallel Skip Search")]
+    public class ParallelSkipSearch : BaseMatch
     {
         /// <summary>
         ///     The skip search list.
@@ -45,25 +45,27 @@ namespace ESMA.Algorithms
             var patternLength = pattern.Length;
             var list = this.skipSearchList;
 
-            int i;
-            for (i = pattern.Length - 1; i < length; i += patternLength)
-            {
-                for (var node = list[data[i]]; node != null; node = node.Next)
+            Parallel.ForEach(
+                Iterator(pattern.Length - 1, length, patternLength),
+                new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount * 2 },
+                i =>
                 {
-                    int j;
-                    var index = i - node.Data;
-                    for (j = 0; j < patternLength && index + j < length && pattern[j] == data[index + j]; j++)
+                    for (var node = list[data[i]]; node != null; node = node.Next)
                     {
-                    }
+                        int j;
+                        var index = i - node.Data;
+                        for (j = 0; j < patternLength && index + j < length && pattern[j] == data[index + j]; j++)
+                        {
+                        }
 
-                    if (j >= patternLength)
-                    {
-                        indexes.Add(index + offset);
+                        if (j >= patternLength)
+                        {
+                            indexes.Add(index + offset);
+                        }
                     }
-                }
-            }
+                });
 
-            return i;
+            return (((length / patternLength) + 1) * patternLength) - 1;
         }
 
         /// <summary>
@@ -82,6 +84,29 @@ namespace ESMA.Algorithms
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// The iterator.
+        /// </summary>
+        /// <param name="startIndex">
+        /// The start index.
+        /// </param>
+        /// <param name="endIndex">
+        /// The end index.
+        /// </param>
+        /// <param name="stepSize">
+        /// The step size.
+        /// </param>
+        /// <returns>
+        /// The Iterator with steps.
+        /// </returns>
+        private static IEnumerable<int> Iterator(int startIndex, int endIndex, int stepSize)
+        {
+            for (var i = startIndex; i < endIndex; i += stepSize)
+            {
+                yield return i;
+            }
         }
     }
 }
