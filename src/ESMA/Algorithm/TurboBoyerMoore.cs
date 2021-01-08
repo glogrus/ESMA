@@ -4,7 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ESMA.Algorithms
+namespace ESMA.Algorithm
 {
     using System.Collections.Generic;
 

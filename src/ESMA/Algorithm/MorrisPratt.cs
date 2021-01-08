@@ -1,48 +1,49 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="QuickSearch.cs" company="GLogrus">
+// <copyright file="MorrisPratt.cs" company="GLogrus">
 //   Copyright (c) GLogrus. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ESMA.Algorithms
+namespace ESMA.Algorithm
 {
     using System.Collections.Generic;
 
     /// <summary>
-    ///     The brute force.
+    ///     The Morris-Pratt.
     /// </summary>
-    [Algorithm("Quick Search")]
-    public class QuickSearch : BaseMatch
+    [Algorithm("Morris-Pratt")]
+    public class MorrisPratt : BaseMatch
     {
         /// <summary>
-        ///     The bad s character shift.
+        ///     The Morris-Pratt algorithmNext.
         /// </summary>
-        private int[] badSCharacterShift;
+        private int[] algorithmNext;
 
         /// <summary>
-        /// The Quick Search Bad shifts.
+        /// The Knuth-Morris-Pratt Next.
         /// </summary>
         /// <param name="pattern">
         /// The pattern.
         /// </param>
         /// <returns>
-        /// The array of Bad shifts.
+        /// The array of algorithmNext.
         /// </returns>
-        internal static int[] QuickSearchBadSCharacterShift(byte[] pattern)
+        internal static int[] MorrisPrattNext(byte[] pattern)
         {
-            var bcs = new int[256];
-
-            for (var i = 0; i < 256; ++i)
+            var next = new int[pattern.Length];
+            var i = 0;
+            var j = next[0] = -1;
+            while (i < pattern.Length)
             {
-                bcs[i] = pattern.Length + 1;
+                while (j > -1 && pattern[i] != pattern[j])
+                {
+                    j = next[j];
+                }
+
+                next[i++] = j++;
             }
 
-            for (var i = 0; i < pattern.Length; i++)
-            {
-                bcs[pattern[i]] = pattern.Length - i;
-            }
-
-            return bcs;
+            return next;
         }
 
         /// <summary>
@@ -61,35 +62,35 @@ namespace ESMA.Algorithms
         /// The offset.
         /// </param>
         /// <returns>
-        /// The <see cref="long"/>.
+        /// The array of index.
         /// </returns>
         protected override int InternalMatch(byte[] data, List<long> indexes, int length, long offset = 0)
         {
             var pattern = this.Pattern;
+            var next = this.algorithmNext;
+            var last = pattern.Length - 1;
+
             var i = 0;
+            var j = 0;
 
-            while (i <= length - pattern.Length)
+            while (i < length)
             {
-                int j;
-                for (j = 0; j < pattern.Length && i < length && pattern[j] == data[i]; j++, i++)
+                while (j > -1 && data[i] != pattern[j])
                 {
+                    j = next[j];
                 }
 
-                if (j >= pattern.Length)
+                if (j >= last)
                 {
-                    indexes.Add(i + offset - pattern.Length);
-                    continue;
+                    indexes.Add(i - j + offset);
+                    j = next[j];
                 }
 
-                if (i + pattern.Length >= length)
-                {
-                    break;
-                }
-
-                i += this.badSCharacterShift[data[i + pattern.Length]];
+                i++;
+                j++;
             }
 
-            return i;
+            return i - j;
         }
 
         /// <summary>
@@ -100,7 +101,7 @@ namespace ESMA.Algorithms
         /// </returns>
         protected override bool Prepare()
         {
-            this.badSCharacterShift = QuickSearchBadSCharacterShift(this.Pattern);
+            this.algorithmNext = MorrisPrattNext(this.Pattern);
             return true;
         }
     }

@@ -1,18 +1,21 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="BruteForce.cs" company="GLogrus">
+// <copyright file="BruteForceMemcmp.cs" company="GLogrus">
 //   Copyright (c) GLogrus. All rights reserved.
 // </copyright>
+// <summary>
+//   
+// </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ESMA.Algorithms
+namespace ESMA.Algorithm
 {
     using System.Collections.Generic;
 
     /// <summary>
     ///     The brute force.
     /// </summary>
-    [Algorithm("Brute Force")]
-    public class BruteForce : BaseMatch
+    [Algorithm("Brute Force Memcmp")]
+    public class BruteForceMemcmp : BaseMatch
     {
         /// <summary>
         /// The internal match.
@@ -32,24 +35,26 @@ namespace ESMA.Algorithms
         /// <returns>
         /// The <see cref="long"/>.
         /// </returns>
-        protected override int InternalMatch(byte[] data, List<long> indexes, int length, long offset = 0)
+        protected override unsafe int InternalMatch(byte[] data, List<long> indexes, int length, long offset = 0)
         {
-            var pattern = this.Pattern;
-            int i;
-            for (i = 0; i <= length - pattern.Length; i++)
+            var patternLength = this.Pattern.Length;
+
+            fixed (byte* ptrData = data, ptrPattern = this.Pattern)
             {
-                int j;
-                for (j = 0; j < pattern.Length && pattern[j] == data[i + j]; j++)
+                var ptrDataSeek = ptrData;
+                var ptrDataStop = ptrData + (length - patternLength);
+                while (ptrDataSeek <= ptrDataStop)
                 {
+                    if (Native.memcmp(ptrDataSeek, ptrPattern, patternLength) == 0)
+                    {
+                        indexes.Add(ptrDataSeek - ptrData + offset);
+                    }
+
+                    ptrDataSeek++;
                 }
 
-                if (j >= pattern.Length)
-                {
-                    indexes.Add(i + offset);
-                }
+                return (int)(ptrDataSeek - ptrData);
             }
-
-            return i;
         }
     }
 }

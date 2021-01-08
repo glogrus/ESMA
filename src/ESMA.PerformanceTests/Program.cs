@@ -9,16 +9,19 @@ namespace ESMA.PerformanceTests
     using BenchmarkDotNet.Running;
 
     /// <summary>
-    /// The program.
+    ///     The program.
     /// </summary>
     internal class Program
     {
         /// <summary>
         /// The main.
         /// </summary>
-        private static void Main()
+        /// <param name="args">
+        /// The args.
+        /// </param>
+        private static void Main(string[] args)
         {
-            BenchmarkRunner.Run<Benchmarks>();
+            BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
         }
     }
 }

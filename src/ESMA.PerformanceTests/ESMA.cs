@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Benchmarks.cs" company="GLogrus">
+// <copyright file="ESMA.cs" company="GLogrus">
 //   Copyright (c) GLogrus. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ namespace ESMA.PerformanceTests
     [HtmlExporter]
     [RankColumn]
     [Config(typeof(Config))]
-    public class Benchmarks
+    public class Esma
     {
         /// <summary>
         ///     Gets or sets the algorithm.
@@ -98,7 +98,12 @@ namespace ESMA.PerformanceTests
                 this.AddExporter(
                     new CsvExporter(
                         CsvSeparator.CurrentCulture,
-                        new SummaryStyle(CultureInfo.InvariantCulture, true, SizeUnit.KB, TimeUnit.Microsecond, false)));
+                        new SummaryStyle(
+                            CultureInfo.InvariantCulture,
+                            true,
+                            SizeUnit.KB,
+                            TimeUnit.Microsecond,
+                            false)));
             }
         }
     }

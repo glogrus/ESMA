@@ -1,23 +1,49 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ReverseFactor.cs" company="GLogrus">
+// <copyright file="QuickSearch.cs" company="GLogrus">
 //   Copyright (c) GLogrus. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ESMA.Algorithms
+namespace ESMA.Algorithm
 {
     using System.Collections.Generic;
 
     /// <summary>
-    ///     The Reverse Factor.
+    ///     The brute force.
     /// </summary>
-    [Algorithm("Reverse Factor")]
-    public class ReverseFactor : BaseMatch
+    [Algorithm("Quick Search")]
+    public class QuickSearch : BaseMatch
     {
         /// <summary>
-        ///     The automaton.
+        ///     The bad s character shift.
         /// </summary>
-        private SuffixAutomaton automaton;
+        private int[] badSCharacterShift;
+
+        /// <summary>
+        /// The Quick Search Bad shifts.
+        /// </summary>
+        /// <param name="pattern">
+        /// The pattern.
+        /// </param>
+        /// <returns>
+        /// The array of Bad shifts.
+        /// </returns>
+        internal static int[] QuickSearchBadSCharacterShift(byte[] pattern)
+        {
+            var bcs = new int[256];
+
+            for (var i = 0; i < 256; ++i)
+            {
+                bcs[i] = pattern.Length + 1;
+            }
+
+            for (var i = 0; i < pattern.Length; i++)
+            {
+                bcs[pattern[i]] = pattern.Length - i;
+            }
+
+            return bcs;
+        }
 
         /// <summary>
         /// The internal match.
@@ -35,44 +61,32 @@ namespace ESMA.Algorithms
         /// The offset.
         /// </param>
         /// <returns>
-        /// The array of index.
+        /// The <see cref="long"/>.
         /// </returns>
         protected override int InternalMatch(byte[] data, List<long> indexes, int length, long offset = 0)
         {
             var pattern = this.Pattern;
-            var am = this.automaton;
-            var period = pattern.Length;
-
             var i = 0;
+
             while (i <= length - pattern.Length)
             {
-                var j = pattern.Length - 1;
-                var vertex = SuffixAutomaton.InitialVertex;
-                var shift = pattern.Length;
-                while (i + j >= 0)
+                int j;
+                for (j = 0; j < pattern.Length && i < length && pattern[j] == data[i]; j++, i++)
                 {
-                    vertex = am.Target[vertex, data[i + j]];
-                    if (vertex == SuffixAutomaton.Undefined)
-                    {
-                        break;
-                    }
-
-                    if (am.Terminal[vertex])
-                    {
-                        period = shift;
-                        shift = j;
-                    }
-
-                    j--;
                 }
 
-                if (j < 0)
+                if (j >= pattern.Length)
                 {
-                    indexes.Add(i + offset);
-                    shift = period;
+                    indexes.Add(i + offset - pattern.Length);
+                    continue;
                 }
 
-                i += shift;
+                if (i + pattern.Length >= length)
+                {
+                    break;
+                }
+
+                i += this.badSCharacterShift[data[i + pattern.Length]];
             }
 
             return i;
@@ -86,7 +100,7 @@ namespace ESMA.Algorithms
         /// </returns>
         protected override bool Prepare()
         {
-            this.automaton = new SuffixAutomaton(this.Pattern, true);
+            this.badSCharacterShift = QuickSearchBadSCharacterShift(this.Pattern);
             return true;
         }
     }

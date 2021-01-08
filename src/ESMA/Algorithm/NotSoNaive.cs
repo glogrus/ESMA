@@ -1,24 +1,19 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Horspool.cs" company="GLogrus">
+// <copyright file="NotSoNaive.cs" company="GLogrus">
 //   Copyright (c) GLogrus. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ESMA.Algorithms
+namespace ESMA.Algorithm
 {
     using System.Collections.Generic;
 
     /// <summary>
     ///     The brute force.
     /// </summary>
-    [Algorithm("Horspool")]
-    public class Horspool : BaseMatch
+    [Algorithm("Not So Naive")]
+    public class NotSoNaive : BaseMatch
     {
-        /// <summary>
-        ///     The bad s character shift.
-        /// </summary>
-        private int[] badCharacterShift;
-
         /// <summary>
         /// The internal match.
         /// </summary>
@@ -41,42 +36,44 @@ namespace ESMA.Algorithms
         {
             var pattern = this.Pattern;
 
-            var i = 0;
-            var maxI = length - pattern.Length;
-            var lastPatternIndex = pattern.Length - 1;
-            var lastPatternByte = pattern[lastPatternIndex];
-            while (i <= maxI)
+            int diff, equal;
+
+            if (pattern[0] == pattern[1])
             {
-                var c = data[i + lastPatternIndex];
-                if (c == lastPatternByte)
+                diff = 2;
+                equal = 1;
+            }
+            else
+            {
+                diff = 1;
+                equal = 2;
+            }
+           
+            var i = 0;
+            while (i <= length - pattern.Length)
+            {
+                if (pattern[1] != data[i + 1])
+                {
+                    i += diff;
+                }
+                else
                 {
                     int j;
-                    for (j = pattern.Length - 1; j >= 0 && pattern[j] == data[i + j]; j--)
+                    for (j = 1; j < pattern.Length && pattern[j] == data[i + j]; j++)
                     {
                     }
 
-                    if (j < 0)
+                    if (j >= pattern.Length && pattern[0] == data[i])
                     {
                         indexes.Add(i + offset);
+                        i += j - 1;
                     }
-                }
 
-                i += this.badCharacterShift[c];
+                    i += equal;
+                }
             }
 
             return i;
-        }
-
-        /// <summary>
-        ///     The prepare.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="bool" />.
-        /// </returns>
-        protected override bool Prepare()
-        {
-            this.badCharacterShift = BoyerMoore.BoyerMooreBadCharacterShift(this.Pattern);
-            return true;
         }
     }
 }

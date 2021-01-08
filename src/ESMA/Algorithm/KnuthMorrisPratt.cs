@@ -1,23 +1,23 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MorrisPratt.cs" company="GLogrus">
+// <copyright file="KnuthMorrisPratt.cs" company="GLogrus">
 //   Copyright (c) GLogrus. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ESMA.Algorithms
+namespace ESMA.Algorithm
 {
     using System.Collections.Generic;
 
     /// <summary>
-    ///     The Morris-Pratt.
+    ///     The Knuth-Morris-Pratt.
     /// </summary>
-    [Algorithm("Morris-Pratt")]
-    public class MorrisPratt : BaseMatch
+    [Algorithm("Knuth-Morris-Pratt")]
+    public class KnuthMorrisPratt : BaseMatch
     {
         /// <summary>
-        ///     The Morris-Pratt algorithmNext.
+        ///     The Knuth-Morris-Pratt next.
         /// </summary>
-        private int[] algorithmNext;
+        private int[] kmpNext;
 
         /// <summary>
         /// The internal match.
@@ -40,12 +40,11 @@ namespace ESMA.Algorithms
         protected override int InternalMatch(byte[] data, List<long> indexes, int length, long offset = 0)
         {
             var pattern = this.Pattern;
-            var next = this.algorithmNext;
+            var next = this.kmpNext;
             var last = pattern.Length - 1;
 
             var i = 0;
             var j = 0;
-
             while (i < length)
             {
                 while (j > -1 && data[i] != pattern[j])
@@ -55,7 +54,7 @@ namespace ESMA.Algorithms
 
                 if (j >= last)
                 {
-                    indexes.Add(i - j + offset);
+                    indexes.Add((i - j) + offset);
                     j = next[j];
                 }
 
@@ -74,7 +73,7 @@ namespace ESMA.Algorithms
         /// </returns>
         protected override bool Prepare()
         {
-            this.algorithmNext = MorrisPrattNext(this.Pattern);
+            this.kmpNext = KnuthMorrisPrattNext(this.Pattern);
             return true;
         }
 
@@ -85,9 +84,9 @@ namespace ESMA.Algorithms
         /// The pattern.
         /// </param>
         /// <returns>
-        /// The array of algorithmNext.
+        /// The array of next.
         /// </returns>
-        internal static int[] MorrisPrattNext(byte[] pattern)
+        private static int[] KnuthMorrisPrattNext(byte[] pattern)
         {
             var next = new int[pattern.Length];
             var i = 0;
@@ -99,7 +98,14 @@ namespace ESMA.Algorithms
                     j = next[j];
                 }
 
-                next[i++] = j++;
+                i++;
+                j++;
+                if (i >= pattern.Length)
+                {
+                    break;
+                }
+
+                next[i] = pattern[i] == pattern[j] ? next[j] : j;
             }
 
             return next;

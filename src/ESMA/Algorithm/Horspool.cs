@@ -1,28 +1,23 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Smith.cs" company="GLogrus">
+// <copyright file="Horspool.cs" company="GLogrus">
 //   Copyright (c) GLogrus. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ESMA.Algorithms
+namespace ESMA.Algorithm
 {
     using System.Collections.Generic;
 
     /// <summary>
-    ///     The Smith.
+    ///     The brute force.
     /// </summary>
-    [Algorithm("Smith")]
-    public class Smith : BaseMatch
+    [Algorithm("Horspool")]
+    public class Horspool : BaseMatch
     {
         /// <summary>
-        ///     The Boyer-Moore bad character shift.
+        ///     The bad s character shift.
         /// </summary>
-        private int[] bmBcs;
-
-        /// <summary>
-        ///     The Quick Search bad character shift.
-        /// </summary>
-        private int[] qsBcs;
+        private int[] badCharacterShift;
 
         /// <summary>
         /// The internal match.
@@ -45,25 +40,28 @@ namespace ESMA.Algorithms
         protected override int InternalMatch(byte[] data, List<long> indexes, int length, long offset = 0)
         {
             var pattern = this.Pattern;
-            var patternLength = pattern.Length;
-            var patternLengthMinusOne = patternLength - 1;
 
             var i = 0;
-            while (i <= length - patternLength)
+            var maxI = length - pattern.Length;
+            var lastPatternIndex = pattern.Length - 1;
+            var lastPatternByte = pattern[lastPatternIndex];
+            while (i <= maxI)
             {
-                int j;
-                for (j = 0; j < patternLength && pattern[j] == data[i + j]; j++)
+                var c = data[i + lastPatternIndex];
+                if (c == lastPatternByte)
                 {
+                    int j;
+                    for (j = pattern.Length - 1; j >= 0 && pattern[j] == data[i + j]; j--)
+                    {
+                    }
+
+                    if (j < 0)
+                    {
+                        indexes.Add(i + offset);
+                    }
                 }
 
-                if (j >= patternLength)
-                {
-                    indexes.Add(i + offset);
-                }
-
-                var i1 = this.bmBcs[data[i + patternLengthMinusOne]];
-                var i2 = i + patternLength >= length ? 1 : this.qsBcs[data[i + patternLength]];
-                i += i1 > i2 ? i1 : i2;
+                i += this.badCharacterShift[c];
             }
 
             return i;
@@ -77,8 +75,7 @@ namespace ESMA.Algorithms
         /// </returns>
         protected override bool Prepare()
         {
-            this.qsBcs = QuickSearch.QuickSearchBadSCharacterShift(this.Pattern);
-            this.bmBcs = BoyerMoore.BoyerMooreBadCharacterShift(this.Pattern);
+            this.badCharacterShift = BoyerMoore.BoyerMooreBadCharacterShift(this.Pattern);
             return true;
         }
     }
