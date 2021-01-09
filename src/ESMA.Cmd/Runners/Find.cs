@@ -42,7 +42,7 @@ namespace ESMA.Cmd.Runners
 
             try
             {
-                matcher.BufferSize = 256;
+                matcher.BufferSize = 65536;
                 var indexes = matcher.Match(args.File, pattern);
                 var i = 1;
                 foreach (var index in indexes)
