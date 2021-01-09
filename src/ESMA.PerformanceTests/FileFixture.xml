@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<files directory="..\..\..\..\..\..\..\..\..\data">
+  <file name="Random-Exist" data="data-random.bin" pattern="pattern-random01.bin" buffersize="65536">
+    <index value="15301" />
+    <index value="49388" />
+    <index value="431031" />
+    <index value="659943" />
+    <index value="777196" />
+  </file>
+  <file name="Text-Word2-08" data="data-text.bin" pattern="pattern-text02.bin" buffersize="65536">
+    <index value="84" />
+    <index value="360" />
+    <index value="783705" />
+    <index value="987950" />
+    <index value="1045706" />
+  </file>
+<!--
+  <file name="Random-NotExist" data="data-random.bin" pattern="pattern-random02.bin" buffersize="65536">
+  </file>
+  <file name="Text-Word1-08" data="data-text.bin" pattern="pattern-text01.bin" buffersize="65536">
+    <index value="212" />
+    <index value="268456" />
+    <index value="417761" />
+    <index value="765405" />
+    <index value="869068" />
+  </file>
+  <file name="Text-Word-NotExist" data="data-text.bin" pattern="pattern-text03.bin" buffersize="65536">
+  </file>
+  <file name="Text-Word1-64" data="data-text.bin" pattern="pattern-text04.bin" buffersize="65536">
+    <index value="224" />
+    <index value="708" />
+    <index value="497016" />
+    <index value="548923" />
+    <index value="1046153" />
+  </file>
+-->  
+</files>
