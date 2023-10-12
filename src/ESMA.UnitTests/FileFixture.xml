@@ -47,4 +47,8 @@
     <index value="643" />
     <index value="921" />
   </file>
+  <file name="MailStoreServer" data="MailStoreServer.dll" pattern="MailStoreServer.bin" buffersize="65536">
+    <index value="4183364" />
+    <index value="4665164" />
+  </file>
 </files>

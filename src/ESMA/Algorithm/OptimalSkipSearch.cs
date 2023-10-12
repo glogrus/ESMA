@@ -58,10 +58,11 @@ namespace ESMA.Algorithm
                     {
                         indexes.Add(index + offset);
                     }
+                   
                 }
             }
 
-            return i;
+            return i > length ? i - patternLength - 1 : i;
         }
 
         /// <summary>

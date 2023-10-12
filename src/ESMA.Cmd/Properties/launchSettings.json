@@ -2,7 +2,7 @@
   "profiles": {
     "ESMA.Cmd": {
       "commandName": "Project",
-      "commandLineArgs": "find -a \"Optimal Skip Search\" -f ..\\..\\..\\..\\..\\data\\data-text.bin -p .\\..\\..\\..\\..\\..\\data\\pattern-text02.bin"
+      "commandLineArgs": "find -a \"Boyer-Moore\" -f ..\\..\\..\\..\\..\\data\\MailStoreServer.dll -p .\\..\\..\\..\\..\\..\\data\\MailStoreServer.bin"
     },
     "WSL 2": {
       "commandName": "WSL2",

@@ -162,15 +162,15 @@ namespace ESMA.Algorithm
         /// </returns>
         private static int[] BoyerMooreSuffixes(byte[] pattern)
         {
-            var suffixes = new int[pattern.Length];
+            var suffixes = new int[2 * pattern.Length];
             suffixes[pattern.Length - 1] = pattern.Length;
             var g = pattern.Length - 1;
             for (var i = pattern.Length - 2; i >= 0; i--)
             {
                 var f = 0;
-                if (i > g && suffixes[(i + pattern.Length) - 1 - f] < i - g)
+                if (i > g && suffixes[i + pattern.Length - 1 - f] < i - g)
                 {
-                    suffixes[i] = suffixes[(i + pattern.Length) - 1 - f];
+                    suffixes[i] = suffixes[i + pattern.Length - 1 - f];
                 }
                 else
                 {

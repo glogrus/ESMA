@@ -25,7 +25,7 @@ namespace ESMA.PerformanceTests
     ///     The benchmarks.
     /// </summary>
     [Orderer(SummaryOrderPolicy.Declared)]
-    [SimpleJob(RuntimeMoniker.NetCoreApp31)]
+    [SimpleJob(RuntimeMoniker.Net60)]
     [Config(typeof(Config))]
     public class ArrayCompare
     {

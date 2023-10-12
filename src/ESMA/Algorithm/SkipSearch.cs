@@ -63,7 +63,7 @@ namespace ESMA.Algorithm
                 }
             }
 
-            return i;
+            return i > length ? i - patternLength - 1 : i;
         }
 
         /// <summary>
